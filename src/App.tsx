@@ -10,6 +10,7 @@ import CompanyDashboard from './pages/CompanyDashboard';
 import SupervisorDashboard from './pages/SupervisorDashboard';
 import InspectorDashboard from './pages/InspectorDashboard';
 import Privacy from './pages/Privacy';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -19,6 +20,9 @@ function App() {
           <Routes>
             {/* Ruta principal */}
             <Route path="/" element={<Home />} />
+
+            {/* Ruta de privacidad */}
+            <Route path="/privacy" element={<Privacy />} />
 
             {/* Rutas de login */}
             <Route path="/login/:portal" element={<Login />} />
@@ -33,8 +37,8 @@ function App() {
             <Route path="/supervisor/centro/*" element={<SupervisorDashboard />} />
             <Route path="/inspector/*" element={<InspectorDashboard />} />
 
-            {/* Ruta de privacidad */}
-            <Route path="/privacy" element={<Privacy />} />
+            {/* Ruta 404 */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>
       </CompanyProvider>
