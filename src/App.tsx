@@ -9,6 +9,7 @@ import EmployeeDashboard from './pages/EmployeeDashboard';
 import CompanyDashboard from './pages/CompanyDashboard';
 import SupervisorDashboard from './pages/SupervisorDashboard';
 import InspectorDashboard from './pages/InspectorDashboard';
+import Privacy from './pages/Privacy';
 
 function App() {
   return (
@@ -31,6 +32,9 @@ function App() {
             <Route path="/empresa/*" element={<CompanyDashboard />} />
             <Route path="/supervisor/centro/*" element={<SupervisorDashboard />} />
             <Route path="/inspector/*" element={<InspectorDashboard />} />
+
+            {/* Ruta de privacidad */}
+            <Route path="/privacy" element={<Privacy />} />
           </Routes>
         </Router>
       </CompanyProvider>
