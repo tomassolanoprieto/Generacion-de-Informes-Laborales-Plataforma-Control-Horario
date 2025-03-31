@@ -35,10 +35,15 @@ function SupervisorRequests() {
   }, []);
 
   useEffect(() => {
-    if (supervisorEmail) {
-      fetchRequests();
+    if (supervisorEmail && workCenters.length > 0) {
+      // Seleccionar el primer centro de trabajo por defecto
+      if (!selectedWorkCenter && workCenters[0]) {
+        setSelectedWorkCenter(workCenters[0]);
+      } else {
+        fetchRequests();
+      }
     }
-  }, [supervisorEmail, selectedWorkCenter, filter, startDate, endDate]);
+  }, [supervisorEmail, selectedWorkCenter, filter, startDate, endDate, workCenters]);
 
   const fetchWorkCenters = async () => {
     try {
@@ -51,8 +56,10 @@ function SupervisorRequests() {
 
       if (error) throw error;
 
-      if (workCenters) {
+      if (workCenters && workCenters.length > 0) {
         setWorkCenters(workCenters);
+      } else {
+        setError('No tienes centros de trabajo asignados');
       }
     } catch (error) {
       console.error('Error fetching work centers:', error);
@@ -62,11 +69,13 @@ function SupervisorRequests() {
 
   const fetchRequests = async () => {
     try {
+      if (!selectedWorkCenter) return;
+      
       setLoading(true);
       setError(null);
 
       const { data: requests, error } = await supabase.rpc('get_filtered_requests', {
-        p_work_center: selectedWorkCenter || null,
+        p_work_center: selectedWorkCenter,
         p_start_date: startDate ? new Date(startDate).toISOString() : null,
         p_end_date: endDate ? new Date(endDate + 'T23:59:59').toISOString() : null
       });
