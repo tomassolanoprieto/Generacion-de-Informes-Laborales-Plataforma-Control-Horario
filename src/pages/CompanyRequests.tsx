@@ -25,29 +25,41 @@ function CompanyRequests() {
   const [endDate, setEndDate] = useState('');
   const [pendingRequestsCount, setPendingRequestsCount] = useState(0);
   const [workCenters, setWorkCenters] = useState<string[]>([]);
+  const [companyId, setCompanyId] = useState<string>('');
 
   useEffect(() => {
-    fetchWorkCenters();
+    fetchCompanyId();
   }, []);
 
   useEffect(() => {
-    fetchRequests();
-  }, [selectedWorkCenter, filter, startDate, endDate]);
+    if (companyId) {
+      fetchWorkCenters();
+      fetchRequests();
+    }
+  }, [companyId, selectedWorkCenter, filter, startDate, endDate]);
 
-  const fetchWorkCenters = async () => {
+  const fetchCompanyId = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
+      
+      setCompanyId(user.id);
+    } catch (error) {
+      console.error('Error fetching company ID:', error);
+    }
+  };
 
-      // Get all unique work centers from employee profiles
+  const fetchWorkCenters = async () => {
+    try {
+      if (!companyId) return;
+
       const { data: employeeData, error: employeeError } = await supabase
         .from('employee_profiles')
         .select('work_centers')
-        .eq('company_id', user.id);
+        .eq('company_id', companyId);
 
       if (employeeError) throw employeeError;
 
-      // Extract unique work centers
       const uniqueWorkCenters = new Set<string>();
       employeeData?.forEach(employee => {
         if (employee.work_centers) {
@@ -63,6 +75,8 @@ function CompanyRequests() {
 
   const fetchRequests = async () => {
     try {
+      if (!companyId) return;
+      
       setLoading(true);
 
       const { data: requests, error } = await supabase.rpc(
@@ -70,7 +84,8 @@ function CompanyRequests() {
         { 
           p_work_center: selectedWorkCenter || null,
           p_start_date: startDate ? new Date(startDate).toISOString() : null,
-          p_end_date: endDate ? new Date(endDate + 'T23:59:59').toISOString() : null
+          p_end_date: endDate ? new Date(endDate + 'T23:59:59').toISOString() : null,
+          p_company_id: companyId
         }
       );
 
