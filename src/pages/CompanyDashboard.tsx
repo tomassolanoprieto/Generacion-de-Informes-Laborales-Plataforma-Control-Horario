@@ -14,6 +14,7 @@ import {
   Edit,
   Calendar,
   Settings,
+  MapPin,
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useCompany } from '../context/CompanyContext';
@@ -25,6 +26,19 @@ import CompanyReports from './CompanyReports';
 import InspectorCredentials from './CompanyInspector';
 
 type TimeEntryType = 'turno' | 'coordinacion' | 'formacion' | 'sustitucion' | 'otros';
+
+const getApproximateLocation = async (latitude, longitude) => {
+  try {
+    const response = await fetch(
+      `https://us1.locationiq.com/v1/reverse.php?key=pk.e07ef17ed17dc6d6359dbbdcaa8d4124&lat=${latitude}&lon=${longitude}&format=json`
+    );
+    const data = await response.json();
+    return data.display_name || "Ubicación no disponible";
+  } catch (error) {
+    console.error("Error con LocationIQ:", error);
+    return "Error al obtener ubicación";
+  }
+};
 
 function Overview() {
   const { employees, timeEntries, loading } = useCompany();
@@ -39,15 +53,35 @@ function Overview() {
     time_type: 'turno' as TimeEntryType,
     work_center: '',
   });
+  const [locations, setLocations] = useState<Record<string, string>>({});
 
-  // Función para formatear la duración
+  const loadLocations = async (entries: any[]) => {
+    const locs: Record<string, string> = {};
+    
+    for (const entry of entries) {
+      if (entry.latitude && entry.longitude) {
+        const location = await getApproximateLocation(entry.latitude, entry.longitude);
+        locs[entry.id] = location;
+      } else {
+        locs[entry.id] = 'No disponible';
+      }
+    }
+    
+    setLocations(locs);
+  };
+
+  useEffect(() => {
+    if (selectedEmployee) {
+      loadLocations(selectedEmployee.entries);
+    }
+  }, [selectedEmployee]);
+
   const formatDuration = (ms: number) => {
     const hours = Math.floor(ms / (1000 * 60 * 60));
     const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
     return `${hours}h ${minutes}m`;
   };
 
-  // Función para calcular las horas trabajadas en el día
   const calculateDailyWorkTime = (entries: any[]) => {
     const today = new Date().toLocaleDateString();
     const todayEntries = entries.filter(
@@ -87,7 +121,6 @@ function Overview() {
         }
       });
 
-    // Si hay una entrada de reloj sin salida (todavía trabajando)
     if (clockInTime && !breakStartTime) {
       const now = new Date().getTime();
       totalTime += now - clockInTime;
@@ -96,11 +129,9 @@ function Overview() {
     return totalTime;
   };
 
-  // Calcular el tiempo total trabajado para cada empleado
   const employeeWorkTimes = employees.map((employee) => {
     const employeeEntries = timeEntries.filter((entry) => entry.employee_id === employee.id && entry.is_active);
 
-    // Agrupar entradas por fecha
     const entriesByDate = employeeEntries.reduce((acc: any, entry) => {
       const date = new Date(entry.timestamp).toLocaleDateString();
       if (!acc[date]) {
@@ -112,7 +143,6 @@ function Overview() {
 
     let totalTime = 0;
 
-    // Calcular el tiempo para cada día
     Object.values(entriesByDate).forEach((dayEntries: any) => {
       const sortedEntries = dayEntries.sort(
         (a: any, b: any) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
@@ -148,7 +178,6 @@ function Overview() {
         }
       });
 
-      // Si hay una entrada de reloj sin salida (todavía trabajando)
       if (clockInTime && !breakStartTime) {
         const now = new Date().getTime();
         totalTime += now - clockInTime;
@@ -165,9 +194,8 @@ function Overview() {
   const handleAddEntry = async () => {
     try {
       const employeeId = selectedEmployee.employee.id;
-      const entryDate = new Date(newEntry.timestamp).toISOString().split('T')[0]; // Obtener la fecha (YYYY-MM-DD)
+      const entryDate = new Date(newEntry.timestamp).toISOString().split('T')[0];
 
-      // Validar solo si el tipo de fichaje es salida, inicio de pausa o fin de pausa
       if (newEntry.entry_type !== 'clock_in') {
         const { data: activeEntries, error: fetchError } = await supabase
           .from('time_entries')
@@ -187,7 +215,6 @@ function Overview() {
         }
       }
 
-      // Insertar el nuevo fichaje
       const { error } = await supabase.from('time_entries').insert([
         {
           employee_id: employeeId,
@@ -197,13 +224,12 @@ function Overview() {
           changes: null,
           original_timestamp: null,
           is_active: true,
-          work_center: newEntry.work_center, // Incluir el centro de trabajo
+          work_center: newEntry.work_center,
         },
       ]);
 
       if (error) throw error;
 
-      // Recargar la página para actualizar los datos
       window.location.reload();
     } catch (err: any) {
       console.error('Error adding entry:', err);
@@ -214,9 +240,8 @@ function Overview() {
   const handleUpdateEntry = async () => {
     try {
       const employeeId = selectedEmployee.employee.id;
-      const entryDate = new Date(editingEntry.timestamp).toISOString().split('T')[0]; // Obtener la fecha (YYYY-MM-DD)
+      const entryDate = new Date(editingEntry.timestamp).toISOString().split('T')[0];
 
-      // Validar solo si el tipo de fichaje es salida, inicio de pausa o fin de pausa
       if (editingEntry.entry_type !== 'clock_in') {
         const { data: activeEntries, error: fetchError } = await supabase
           .from('time_entries')
@@ -236,7 +261,6 @@ function Overview() {
         }
       }
 
-      // Actualizar el fichaje
       const { error } = await supabase
         .from('time_entries')
         .update({
@@ -245,13 +269,12 @@ function Overview() {
           timestamp: new Date(editingEntry.timestamp).toISOString(),
           changes: 'edited',
           original_timestamp: editingEntry.original_timestamp || editingEntry.timestamp,
-          work_center: editingEntry.work_center, // Incluir el centro de trabajo
+          work_center: editingEntry.work_center,
         })
         .eq('id', editingEntry.id);
 
       if (error) throw error;
 
-      // Recargar la página para actualizar los datos
       window.location.reload();
     } catch (err: any) {
       console.error('Error updating entry:', err);
@@ -263,7 +286,6 @@ function Overview() {
     if (!confirm('¿Estás seguro de que quieres eliminar este fichaje?')) return;
 
     try {
-      // Marcar el fichaje como eliminado (desactivarlo)
       const { error } = await supabase
         .from('time_entries')
         .update({
@@ -274,7 +296,6 @@ function Overview() {
 
       if (error) throw error;
 
-      // Recargar la página para actualizar los datos
       window.location.reload();
     } catch (err) {
       console.error('Error deleting entry:', err);
@@ -299,7 +320,6 @@ function Overview() {
 
   const totalWorkTime = employeeWorkTimes.reduce((acc, curr) => acc + curr.totalTime, 0);
 
-  // Filtrar empleados basados en el término de búsqueda
   const filteredEmployees = employeeWorkTimes.filter(({ employee }) =>
     employee.fiscal_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     employee.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -349,7 +369,6 @@ function Overview() {
           </div>
         </div>
 
-        {/* Buscador */}
         <div className="mb-6">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -363,7 +382,6 @@ function Overview() {
           </div>
         </div>
 
-        {/* Lista de Empleados */}
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <table className="min-w-full divide-y divide-gray-200">
             <thead>
@@ -432,165 +450,176 @@ function Overview() {
           </table>
         </div>
 
-        {/* Modal de Detalles */}
         {showDetailsModal && selectedEmployee && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl shadow-lg max-w-6xl w-full max-h-[80vh] overflow-hidden">
-              <div className="p-6 border-b border-gray-200">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-xl font-semibold">
-                    Detalles de Fichajes - {selectedEmployee.employee.fiscal_name}
-                  </h2>
-                  <button
-                    onClick={() => setShowDetailsModal(false)}
-                    className="text-gray-500 hover:text-gray-700"
-                  >
-                    <X className="w-6 h-6" />
-                  </button>
-                </div>
-              </div>
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div className="bg-white rounded-xl shadow-lg max-w-6xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+      {/* Header */}
+      <div className="p-6 border-b border-gray-200">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold">
+            Detalles de Fichajes - {selectedEmployee.employee.fiscal_name}
+          </h2>
+          <button
+            onClick={() => setShowDetailsModal(false)}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+      </div>
 
-              {/* Nuevo recuadro de horas trabajadas en el día */}
-              <div className="p-6 bg-blue-50 border-b border-blue-200">
-                <div className="flex items-center gap-4">
-                  <Clock className="w-6 h-6 text-blue-600" />
-                  <div>
-                    <p className="text-sm text-gray-600">Horas trabajadas hoy</p>
-                    <p className="text-xl font-bold">
-                      {formatDuration(calculateDailyWorkTime(selectedEmployee.entries))}
-                    </p>
-                  </div>
-                </div>
-              </div>
+      {/* Daily Hours */}
+      <div className="p-6 bg-blue-50 border-b border-blue-200">
+        <div className="flex items-center gap-4">
+          <Clock className="w-6 h-6 text-blue-600" />
+          <div>
+            <p className="text-sm text-gray-600">Horas trabajadas hoy</p>
+            <p className="text-xl font-bold">
+              {formatDuration(calculateDailyWorkTime(selectedEmployee.entries))}
+            </p>
+          </div>
+        </div>
+      </div>
 
-              <div className="p-6 overflow-y-auto" style={{ maxHeight: '60vh' }}>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-gray-500">Email</p>
-                      <p className="font-medium">{selectedEmployee.employee.email}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Centros de Trabajo</p>
-                      <p className="font-medium">
-                        {Array.isArray(selectedEmployee.employee.work_centers)
-                          ? selectedEmployee.employee.work_centers.join(', ')
-                          : ''}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="mt-6">
-                    <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-lg font-medium">Registro de Fichajes</h3>
-                      <button
-                        onClick={() => setShowEditModal(true)}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                      >
-                        <Plus className="w-4 h-4" />
-                        Añadir Fichaje
-                      </button>
-                    </div>
-                    <div className="bg-gray-50 rounded-lg overflow-hidden">
-                      <table className="min-w-full divide-y divide-gray-200">
-                        <thead>
-                          <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Fecha
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Hora
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Tipo
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Centro de Trabajo
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Cambios
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Acciones
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                          {selectedEmployee.entries
-                            .sort(
-                              (a: any, b: any) =>
-                                new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-                            )
-                            .map((entry: any) => (
-                              <tr key={entry.id} className="hover:bg-gray-50">
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  {new Date(entry.timestamp).toLocaleDateString()}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  {new Date(entry.timestamp).toLocaleTimeString()}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  {getEntryTypeText(entry.entry_type)}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  {entry.work_center || ''}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  {entry.changes || 'N/A'}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  <div className="flex gap-2">
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setEditingEntry({
-                                          id: entry.id,
-                                          timestamp: new Date(entry.timestamp).toISOString().slice(0, 16),
-                                          entry_type: entry.entry_type,
-                                          time_type: entry.time_type,
-                                          work_center: entry.work_center,
-                                          original_timestamp: entry.original_timestamp,
-                                        });
-                                        setShowEditModal(true);
-                                      }}
-                                      className="p-1 text-blue-600 hover:text-blue-800"
-                                    >
-                                      <Edit className="w-4 h-4" />
-                                    </button>
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleDeleteEntry(entry.id);
-                                      }}
-                                      className="p-1 text-red-600 hover:text-red-800"
-                                    >
-                                      <X className="w-4 h-4" />
-                                    </button>
-                                  </div>
-                                </td>
-                              </tr>
-                            ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="p-6 border-t border-gray-200">
-                <div className="flex justify-end">
-                  <button
-                    onClick={() => setShowDetailsModal(false)}
-                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-                  >
-                    Cerrar
-                  </button>
-                </div>
-              </div>
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto p-6">
+        <div className="space-y-6">
+          {/* Employee Info */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm text-gray-500">Email</p>
+              <p className="font-medium">{selectedEmployee.employee.email}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Centros de Trabajo</p>
+              <p className="font-medium">
+                {Array.isArray(selectedEmployee.employee.work_centers)
+                  ? selectedEmployee.employee.work_centers.join(', ')
+                  : '-'}
+              </p>
             </div>
           </div>
-        )}
 
-        {/* Modal de Edición/Añadir */}
+          {/* Time Entries Table */}
+          <div>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-medium">Registro de Fichajes</h3>
+              <button
+                onClick={() => setShowEditModal(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                Añadir Fichaje
+              </button>
+            </div>
+
+            {/* Table Container with Horizontal Scroll */}
+            <div className="overflow-x-auto shadow-sm border border-gray-200 rounded-lg">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                      Fecha
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                      Hora
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                      Tipo
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                      Centro
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                      Ubicación
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                      Cambios
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                      Acciones
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {selectedEmployee.entries
+                    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+                    .map((entry: any) => (
+                      <tr key={entry.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {new Date(entry.timestamp).toLocaleDateString()}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {new Date(entry.timestamp).toLocaleTimeString()}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {getEntryTypeText(entry.entry_type)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {entry.work_center || '-'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          <div className="flex items-center gap-1">
+                            <MapPin className="w-4 h-4 text-gray-500" />
+                            {locations[entry.id] || 'Cargando...'}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {entry.changes || 'N/A'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          <div className="flex gap-2">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setEditingEntry({
+                                  id: entry.id,
+                                  timestamp: new Date(entry.timestamp).toISOString().slice(0, 16),
+                                  entry_type: entry.entry_type,
+                                  work_center: entry.work_center,
+                                  original_timestamp: entry.original_timestamp,
+                                });
+                                setShowEditModal(true);
+                              }}
+                              className="p-1 text-blue-600 hover:text-blue-800"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteEntry(entry.id);
+                              }}
+                              className="p-1 text-red-600 hover:text-red-800"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="p-4 border-t border-gray-200 bg-gray-50">
+        <div className="flex justify-end">
+          <button
+            onClick={() => setShowDetailsModal(false)}
+            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
         {showEditModal && selectedEmployee && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-xl shadow-lg max-w-2xl w-full">
@@ -607,7 +636,7 @@ function Overview() {
                         timestamp: '',
                         entry_type: 'clock_in',
                         time_type: 'turno',
-                        work_center: selectedEmployee.employee.work_centers[0], // Incluir el centro de trabajo por defecto
+                        work_center: selectedEmployee.employee.work_centers[0],
                       });
                     }}
                     className="text-gray-500 hover:text-gray-700"
@@ -628,7 +657,6 @@ function Overview() {
                   }}
                   className="space-y-4"
                 >
-                  {/* Campo: Fecha y Hora */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Fecha y Hora
@@ -648,7 +676,6 @@ function Overview() {
                     />
                   </div>
 
-                  {/* Campo: Tipo de Fichaje */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Tipo de Fichaje
@@ -672,7 +699,6 @@ function Overview() {
                     </select>
                   </div>
 
-                  {/* Campo: Centro de Trabajo (siempre visible) */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Centro de Trabajo
@@ -697,7 +723,6 @@ function Overview() {
                     </select>
                   </div>
 
-                  {/* Botones del Formulario */}
                   <div className="flex justify-end gap-4 mt-6">
                     <button
                       type="button"
@@ -708,7 +733,7 @@ function Overview() {
                           timestamp: '',
                           entry_type: 'clock_in',
                           time_type: 'turno',
-                          work_center: selectedEmployee.employee.work_centers[0], // Incluir el centro de trabajo por defecto
+                          work_center: selectedEmployee.employee.work_centers[0],
                         });
                       }}
                       className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
@@ -735,7 +760,7 @@ function Overview() {
 export default function CompanyDashboard() {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('overview');
-  const [pendingRequestsCount, setPendingRequestsCount] = useState(0); // Estado para contar solicitudes pendientes
+  const [pendingRequestsCount, setPendingRequestsCount] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -751,12 +776,11 @@ export default function CompanyDashboard() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Supongamos que la columna correcta es `employee_id` o alguna otra columna que relacione las solicitudes con la empresa
       const { data: requests, error } = await supabase
         .from('time_requests')
         .select('*')
         .eq('status', 'pending')
-        .eq('employee_id', user.id); // Cambiar `company_id` por la columna correcta
+        .eq('employee_id', user.id);
 
       if (error) {
         console.error('Error fetching pending requests:', error);
@@ -776,7 +800,6 @@ export default function CompanyDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
       <div className="w-64 bg-white shadow-lg">
         <div className="p-6">
           <div className="flex items-center gap-2 mb-8">
@@ -886,7 +909,6 @@ export default function CompanyDashboard() {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="flex-1">
         <Routes>
           <Route path="/" element={<Overview />} />
@@ -894,7 +916,7 @@ export default function CompanyDashboard() {
           <Route path="/solicitudes" element={<CompanyRequests />} />
           <Route path="/calendario" element={<CompanyCalendar />} />
           <Route path="/informes" element={<CompanyReports />} />
-          <Route path="/inspector" element={<InspectorCredentials />} /> {/* Nuevo apartado */}
+          <Route path="/inspector" element={<InspectorCredentials />} />
           <Route path="/ajustes" element={<CompanySettings />} />
         </Routes>
       </div>
