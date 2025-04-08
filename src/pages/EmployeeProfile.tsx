@@ -17,12 +17,22 @@ export default function EmployeeProfile() {
     work_centers: string[];
     job_positions: string[];
     seniority_date: string;
-    work_schedule: { [key: string]: { start_time: string, end_time: string } | null };
+    work_schedule: { 
+      [key: string]: { 
+        morning_shift?: { start_time: string, end_time: string },
+        afternoon_shift?: { start_time: string, end_time: string }
+      } | null 
+    };
     notification_minutes: number;
   } | null>(null);
   const [newPin, setNewPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
-  const [workSchedule, setWorkSchedule] = useState<{ [key: string]: { start_time: string, end_time: string } | null }>({});
+  const [workSchedule, setWorkSchedule] = useState<{ 
+    [key: string]: { 
+      morning_shift?: { start_time: string, end_time: string },
+      afternoon_shift?: { start_time: string, end_time: string }
+    } | null 
+  }>({});
   const [notificationMinutes, setNotificationMinutes] = useState<number>(0);
 
   useEffect(() => {
@@ -120,14 +130,22 @@ export default function EmployeeProfile() {
     }
   };
 
-  const handleWorkScheduleChange = (day: string, field: string, value: string) => {
-    setWorkSchedule(prev => ({
-      ...prev,
-      [day]: {
-        ...prev[day],
-        [field]: value
-      }
-    }));
+  const handleWorkScheduleChange = (day: string, shift: 'morning_shift' | 'afternoon_shift', field: 'start_time' | 'end_time', value: string) => {
+    setWorkSchedule(prev => {
+      const daySchedule = prev[day] || {};
+      const shiftSchedule = daySchedule?.[shift] || { start_time: '', end_time: '' };
+      
+      return {
+        ...prev,
+        [day]: {
+          ...daySchedule,
+          [shift]: {
+            ...shiftSchedule,
+            [field]: value
+          }
+        }
+      };
+    });
   };
 
   const handleNotificationMinutesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -288,26 +306,67 @@ export default function EmployeeProfile() {
           </h3>
 
           {['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'].map(day => (
-            <div key={day} className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              <label className="block text-sm font-medium text-gray-700">{day}</label>
-              <input
-                type="time"
-                value={workSchedule[day]?.start_time || ''}
-                onChange={(e) => handleWorkScheduleChange(day, 'start_time', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-              <input
-                type="time"
-                value={workSchedule[day]?.end_time || ''}
-                onChange={(e) => handleWorkScheduleChange(day, 'end_time', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
+            <div key={day} className="mb-6">
+              <h4 className="text-lg font-medium mb-2">{day}</h4>
+              
+              <div className="space-y-4">
+                {/* Turno Día */}
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h5 className="font-medium text-blue-800 mb-2">Turno Día</h5>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Entrada</label>
+                      <input
+                        type="time"
+                        value={workSchedule[day]?.morning_shift?.start_time || ''}
+                        onChange={(e) => handleWorkScheduleChange(day, 'morning_shift', 'start_time', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Salida</label>
+                      <input
+                        type="time"
+                        value={workSchedule[day]?.morning_shift?.end_time || ''}
+                        onChange={(e) => handleWorkScheduleChange(day, 'morning_shift', 'end_time', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Turno Tarde */}
+                <div className="bg-orange-50 p-4 rounded-lg">
+                  <h5 className="font-medium text-orange-800 mb-2">Turno Tarde</h5>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Entrada</label>
+                      <input
+                        type="time"
+                        value={workSchedule[day]?.afternoon_shift?.start_time || ''}
+                        onChange={(e) => handleWorkScheduleChange(day, 'afternoon_shift', 'start_time', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Salida</label>
+                      <input
+                        type="time"
+                        value={workSchedule[day]?.afternoon_shift?.end_time || ''}
+                        onChange={(e) => handleWorkScheduleChange(day, 'afternoon_shift', 'end_time', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <button
                 type="button"
                 onClick={() => setWorkSchedule(prev => ({ ...prev, [day]: null }))}
-                className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors"
+                className="mt-2 w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors"
               >
-                No Trabaja
+                No Trabaja este día
               </button>
             </div>
           ))}
