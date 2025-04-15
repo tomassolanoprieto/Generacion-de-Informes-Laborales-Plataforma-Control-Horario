@@ -451,167 +451,174 @@ function Overview() {
         </div>
 
         {showDetailsModal && selectedEmployee && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-xl shadow-lg max-w-6xl w-full max-h-[80vh] overflow-hidden flex flex-col">
-              <div className="p-6 border-b border-gray-200">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-xl font-semibold">
-                    Detalles de Fichajes - {selectedEmployee.employee.fiscal_name}
-                  </h2>
-                  <button
-                    onClick={() => setShowDetailsModal(false)}
-                    className="text-gray-500 hover:text-gray-700"
-                  >
-                    <X className="w-6 h-6" />
-                  </button>
-                </div>
-              </div>
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div className="bg-white rounded-xl shadow-lg max-w-6xl w-full max-h-[80vh] overflow-hidden flex flex-col">
+      {/* Header */}
+      <div className="p-6 border-b border-gray-200">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold">
+            Detalles de Fichajes - {selectedEmployee.employee.fiscal_name}
+          </h2>
+          <button
+            onClick={() => setShowDetailsModal(false)}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+      </div>
 
-              <div className="p-6 bg-blue-50 border-b border-blue-200">
-                <div className="flex items-center gap-4">
-                  <Clock className="w-6 h-6 text-blue-600" />
-                  <div>
-                    <p className="text-sm text-gray-600">Horas trabajadas hoy</p>
-                    <p className="text-xl font-bold">
-                      {formatDuration(calculateDailyWorkTime(selectedEmployee.entries))}
-                    </p>
-                  </div>
-                </div>
-              </div>
+      {/* Daily Hours */}
+      <div className="p-6 bg-blue-50 border-b border-blue-200">
+        <div className="flex items-center gap-4">
+          <Clock className="w-6 h-6 text-blue-600" />
+          <div>
+            <p className="text-sm text-gray-600">Horas trabajadas hoy</p>
+            <p className="text-xl font-bold">
+              {formatDuration(calculateDailyWorkTime(selectedEmployee.entries))}
+            </p>
+          </div>
+        </div>
+      </div>
 
-              <div className="flex-1 overflow-y-auto p-6">
-                <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-gray-500">Email</p>
-                      <p className="font-medium">{selectedEmployee.employee.email}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Centros de Trabajo</p>
-                      <p className="font-medium">
-                        {Array.isArray(selectedEmployee.employee.work_centers)
-                          ? selectedEmployee.employee.work_centers.join(', ')
-                          : '-'}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-lg font-medium">Registro de Fichajes</h3>
-                      <button
-                        onClick={() => setShowEditModal(true)}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                      >
-                        <Plus className="w-4 h-4" />
-                        Añadir Fichaje
-                      </button>
-                    </div>
-
-                    <div className="overflow-x-auto shadow-sm border border-gray-200 rounded-lg">
-                      <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                              Fecha
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                              Hora
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                              Tipo
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                              Centro
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                              Ubicación
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                              Cambios
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                              Acciones
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                          {selectedEmployee.entries
-                            .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-                            .map((entry: any) => (
-                              <tr key={entry.id} className="hover:bg-gray-50">
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  {new Date(entry.timestamp).toLocaleDateString()}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  {new Date(entry.timestamp).toLocaleTimeString()}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  {getEntryTypeText(entry.entry_type)}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  {entry.work_center || '-'}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  <div className="flex items-center gap-1">
-                                    <MapPin className="w-4 h-4 text-gray-500" />
-                                    {locations[entry.id] || 'Cargando...'}
-                                  </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  {entry.changes || 'N/A'}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  <div className="flex gap-2">
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setEditingEntry({
-                                          id: entry.id,
-                                          timestamp: new Date(entry.timestamp).toISOString().slice(0, 16),
-                                          entry_type: entry.entry_type,
-                                          work_center: entry.work_center,
-                                          original_timestamp: entry.original_timestamp,
-                                        });
-                                        setShowEditModal(true);
-                                      }}
-                                      className="p-1 text-blue-600 hover:text-blue-800"
-                                    >
-                                      <Edit className="w-4 h-4" />
-                                    </button>
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleDeleteEntry(entry.id);
-                                      }}
-                                      className="p-1 text-red-600 hover:text-red-800"
-                                    >
-                                      <X className="w-4 h-4" />
-                                    </button>
-                                  </div>
-                                </td>
-                              </tr>
-                            ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-4 border-t border-gray-200 bg-gray-50">
-                <div className="flex justify-end">
-                  <button
-                    onClick={() => setShowDetailsModal(false)}
-                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-                  >
-                    Cerrar
-                  </button>
-                </div>
-              </div>
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto p-6">
+        <div className="space-y-6">
+          {/* Employee Info */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm text-gray-500">Email</p>
+              <p className="font-medium">{selectedEmployee.employee.email}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Centros de Trabajo</p>
+              <p className="font-medium">
+                {Array.isArray(selectedEmployee.employee.work_centers)
+                  ? selectedEmployee.employee.work_centers.join(', ')
+                  : '-'}
+              </p>
             </div>
           </div>
-        )}
+
+          {/* Time Entries Table */}
+          <div>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-medium">Registro de Fichajes</h3>
+              <button
+                onClick={() => setShowEditModal(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                Añadir Fichaje
+              </button>
+            </div>
+
+            {/* Table Container with Horizontal Scroll */}
+            <div className="overflow-x-auto shadow-sm border border-gray-200 rounded-lg">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                      Fecha
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                      Hora
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                      Tipo
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                      Centro
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                      Ubicación
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                      Cambios
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                      Acciones
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {selectedEmployee.entries
+                    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+                    .map((entry: any) => (
+                      <tr key={entry.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {new Date(entry.timestamp).toLocaleDateString()}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {new Date(entry.timestamp).toLocaleTimeString()}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {getEntryTypeText(entry.entry_type)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {entry.work_center || '-'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          <div className="flex items-center gap-1">
+                            <MapPin className="w-4 h-4 text-gray-500" />
+                            {locations[entry.id] || 'Cargando...'}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {entry.changes || 'N/A'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          <div className="flex gap-2">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setEditingEntry({
+                                  id: entry.id,
+                                  timestamp: new Date(entry.timestamp).toISOString().slice(0, 16),
+                                  entry_type: entry.entry_type,
+                                  work_center: entry.work_center,
+                                  original_timestamp: entry.original_timestamp,
+                                });
+                                setShowEditModal(true);
+                              }}
+                              className="p-1 text-blue-600 hover:text-blue-800"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteEntry(entry.id);
+                              }}
+                              className="p-1 text-red-600 hover:text-red-800"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="p-4 border-t border-gray-200 bg-gray-50">
+        <div className="flex justify-end">
+          <button
+            onClick={() => setShowDetailsModal(false)}
+            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
 
         {showEditModal && selectedEmployee && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -793,19 +800,12 @@ export default function CompanyDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
       <div className="w-64 bg-white shadow-lg">
         <div className="p-6">
-          {/* Header with platform name */}
           <div className="flex items-center gap-2 mb-8">
             <Shield className="w-8 h-8 text-blue-600" />
-            <div>
-              <h1 className="text-lg font-bold text-gray-800">Generación de Informes Laborales</h1>
-              <h2 className="text-sm text-gray-600">Plataforma Control Horario</h2>
-            </div>
+            <span className="text-xl font-bold">Portal Empresa</span>
           </div>
-          
-          {/* Navigation */}
           <nav className="space-y-2">
             <button
               onClick={() => {
@@ -909,42 +909,16 @@ export default function CompanyDashboard() {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="flex-1">
-        {/* Top Bar with Company Name */}
-        <div className="bg-white shadow-sm">
-          <div className="flex justify-between items-center px-6 py-4">
-            <div className="text-lg font-semibold text-gray-800">
-              {activeTab === 'overview' && 'Vista General'}
-              {activeTab === 'employees' && 'Gestión de Empleados'}
-              {activeTab === 'requests' && 'Solicitudes de Modificación'}
-              {activeTab === 'calendar' && 'Calendario Laboral'}
-              {activeTab === 'reports' && 'Informes y Reportes'}
-              {activeTab === 'inspector' && 'Gestión de Inspectores'}
-              {activeTab === 'settings' && 'Configuración de Empresa'}
-            </div>
-            <div className="flex items-center gap-2">
-              <User className="w-5 h-5 text-gray-500" />
-              <div className="text-right">
-                <p className="text-sm font-medium text-gray-700">{userEmail}</p>
-                <p className="text-xs text-gray-500">CONTROLALTSUP S.L.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="p-6">
-          <Routes>
-            <Route path="/" element={<Overview />} />
-            <Route path="/empleados" element={<CompanyEmployees />} />
-            <Route path="/solicitudes" element={<CompanyRequests />} />
-            <Route path="/calendario" element={<CompanyCalendar />} />
-            <Route path="/informes" element={<CompanyReports />} />
-            <Route path="/inspector" element={<InspectorCredentials />} />
-            <Route path="/ajustes" element={<CompanySettings />} />
-          </Routes>
-        </div>
+        <Routes>
+          <Route path="/" element={<Overview />} />
+          <Route path="/empleados" element={<CompanyEmployees />} />
+          <Route path="/solicitudes" element={<CompanyRequests />} />
+          <Route path="/calendario" element={<CompanyCalendar />} />
+          <Route path="/informes" element={<CompanyReports />} />
+          <Route path="/inspector" element={<InspectorCredentials />} />
+          <Route path="/ajustes" element={<CompanySettings />} />
+        </Routes>
       </div>
     </div>
   );
