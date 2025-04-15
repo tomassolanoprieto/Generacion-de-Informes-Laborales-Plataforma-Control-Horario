@@ -800,8 +800,8 @@ export default function CompanyDashboard() {
           <div className="flex items-center gap-2 mb-8">
             <Shield className="w-8 h-8 text-blue-600" />
             <div>
-              <h1 className="text-lg font-bold text-gray-800">Plataforma de Gestión</h1>
-              <h2 className="text-sm text-gray-600">Control Horario</h2>
+              <h1 className="text-lg font-bold text-gray-800">Generación de Informes Laborales</h1>
+              <h2 className="text-sm text-gray-600">Plataforma Control Horario</h2>
             </div>
           </div>
           
