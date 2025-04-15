@@ -66,14 +66,14 @@ export default function Home() {
       {/* Hero Section */}
       <div className="container mx-auto px-4 pt-20 pb-32">
         <div className="text-center mb-16">
-          {/* Diseño bonito para el título Plataforma de Gestión de Control Horario */}
+          {/* Diseño bonito para el título FichajeXpert */}
           <div className="flex justify-center mb-12">
             <div className="text-5xl font-bold text-gray-800">
-              <span className="text-blue-600">Plataforma de Gestión</span>
-              <span className="text-green-600"> de Control Horario</span>
+              <span className="text-blue-600">Fichaje</span>
+              <span className="text-green-600">Xpert</span>
             </div>
             <div className="ml-4 relative">
-              {/* Icono de reloj integrado */}
+              {/* Icono de reloj integrado en la "X" */}
               <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center">
                 <svg
                   className="w-8 h-8 text-white"
