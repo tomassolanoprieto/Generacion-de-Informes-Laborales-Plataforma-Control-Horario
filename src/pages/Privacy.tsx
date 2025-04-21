@@ -13,119 +13,117 @@ export default function Privacy() {
           className="mb-8 flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 bg-white rounded-lg shadow-sm hover:shadow transition-all"
         >
           <ArrowLeft className="w-5 h-5" />
-          Volver al Inicio
+          Back to Home
         </button>
 
         <div className="bg-white rounded-xl shadow-lg p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Política de Privacidad</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-8">Privacy Policy</h1>
 
           <div className="space-y-6 text-gray-600">
             <section>
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">1. Introducción</h2>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">1. Introduction</h2>
               <p>
-                FrenillosCR ("nosotros", "nuestro" o "nos") opera un chatbot ("el Chatbot") alojado en Microsoft Copilot Studio,
-                diseñado para asistir a los usuarios con consultas relacionadas a nuestros servicios de ortodoncia, incluyendo
-                programación de citas, información sobre tratamientos, precios y soporte al cliente.
+                FrenillosCR ("we", "us", or "our") operates a chatbot ("the Chatbot") hosted on Microsoft Copilot Studio,
+                designed to assist users with inquiries related to our orthodontic services, including
+                appointment scheduling, treatment information, pricing, and customer support.
               </p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">2. Información que Recopilamos</h2>
-              <p className="mb-3">El Chatbot puede procesar los siguientes tipos de información:</p>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">2. Information We Collect</h2>
+              <p className="mb-3">The Chatbot may process the following types of information:</p>
               <ul className="list-disc pl-6 space-y-2">
-                <li>Mensajes que envíe al Chatbot (consultas sobre citas, tratamientos o precios)</li>
-                <li>Datos de contacto (si son proporcionados voluntariamente, ej. nombre, teléfono, email)</li>
-                <li>Metadatos de plataformas Meta (ej. ID de usuario, historial de mensajes)</li>
-                <li>Registros de interacciones con el Chatbot (para mejorar respuestas)</li>
+                <li>Messages you send to the Chatbot (queries about appointments, treatments, or prices)</li>
+                <li>Contact details (if voluntarily provided, e.g., name, phone number, email)</li>
+                <li>Metadata from Meta platforms (e.g., user ID, message history)</li>
+                <li>Chatbot interaction logs (to improve responses)</li>
               </ul>
-              <p className="mt-3 font-medium">No recopilamos intencionalmente:</p>
+              <p className="mt-3 font-medium">We do not intentionally collect:</p>
               <ul className="list-disc pl-6 space-y-2">
-                <li>Información financiera (tarjetas de crédito, datos bancarios)</li>
-                <li>Registros médicos sensibles (más allá de consultas generales)</li>
-                <li>Documentos de identificación oficial</li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">3. Uso de la Información</h2>
-              <p className="mb-3">Utilizamos los datos para:</p>
-              <ul className="list-disc pl-6 space-y-2">
-                <li>Responder consultas sobre citas, tratamientos y precios</li>
-                <li>Mejorar la precisión y experiencia del Chatbot</li>
-                <li>Redirigir conversaciones a canales apropiados (ej. soporte humano)</li>
-                <li>Cumplir con obligaciones legales cuando aplique</li>
+                <li>Financial information (credit cards, bank details)</li>
+                <li>Sensitive medical records (beyond general treatment inquiries)</li>
+                <li>Government-issued IDs</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">4. Compartir Datos</h2>
-              <p className="mb-3">Compartimos información con:</p>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">3. How We Use Your Information</h2>
+              <p className="mb-3">We use the data to:</p>
               <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Meta Platforms:</strong> Mensajes se procesan mediante sus APIs cumpliendo sus políticas</li>
-                <li><strong>Microsoft Copilot Studio:</strong> Aloja el Chatbot bajo sus estándares de seguridad</li>
+                <li>Respond to inquiries about appointments, treatments, and pricing</li>
+                <li>Improve the Chatbot's accuracy and user experience</li>
+                <li>Redirect conversations to appropriate channels (e.g., human support)</li>
+                <li>Comply with legal obligations when applicable</li>
               </ul>
-              <p className="mt-3">No vendemos ni compartimos datos con terceros para marketing.</p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">5. Seguridad de Datos</h2>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">4. Data Sharing</h2>
+              <p className="mb-3">We share information with:</p>
+              <ul className="list-disc pl-6 space-y-2">
+                <li><strong>Meta Platforms:</strong> Messages are processed through their APIs in compliance with their policies</li>
+                <li><strong>Microsoft Copilot Studio:</strong> Hosts the Chatbot under their security standards</li>
+              </ul>
+              <p className="mt-3">We do not sell or share data with third parties for marketing purposes.</p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">5. Data Security</h2>
               <p>
-                Implementamos medidas para proteger su información:
+                We implement measures to protect your information:
               </p>
               <ul className="list-disc pl-6 mt-3 space-y-2">
-                <li>Accesos restringidos a la información</li>
-                <li>Monitoreo continuo de seguridad</li>
-                <li>Retención mínima necesaria de mensajes</li>
+                <li>Restricted access to information</li>
+                <li>Continuous security monitoring</li>
+                <li>Minimal retention of messages</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">6. Sus Derechos</h2>
-              <p className="mb-3">Usted puede:</p>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">6. Your Rights</h2>
+              <p className="mb-3">You can:</p>
               <ul className="list-disc pl-6 space-y-2">
-                <li>Solicitar acceso o eliminación de sus datos</li>
-                <li>Rectificar información inexacta</li>
-                <li>Dejar de interactuar con el Chatbot en cualquier momento</li>
+                <li>Request access to or deletion of your data</li>
+                <li>Correct inaccurate information</li>
+                <li>Stop interacting with the Chatbot at any time</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">7. Retención de Datos</h2>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">7. Data Retention</h2>
               <p>
-                Conservamos mensajes solo el tiempo necesario para cumplir con las solicitudes y obligaciones legales.
+                We retain messages only as long as necessary to fulfill requests and legal obligations.
               </p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">8. Cumplimiento con Meta</h2>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">8. Compliance with Meta</h2>
               <p>
-                El Chatbot sigue las <strong>Políticas para Desarrolladores</strong> y <strong>Términos de Plataforma</strong> de Meta.
-                No almacenamos datos sensibles más allá de lo necesario para su funcionamiento.
+                The Chatbot follows Meta's <strong>Developer Policies</strong> and <strong>Platform Terms</strong>.
+                We don't store sensitive data beyond what's necessary for functionality.
               </p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">9. Contacto</h2>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">9. Contact Us</h2>
               <p>
-                Para preguntas sobre privacidad:
+                For privacy-related questions:
               </p>
               <div className="mt-3">
                 <p className="font-medium">FrenillosCR</p>
-                <p>Email: [Insertar Email de Contacto]</p>
-                <p>Teléfono: [Insertar Teléfono si aplica]</p>
+                <p>Email: info@frenillos.com</p>
+                <p>Phone: 6161-9997</p>
               </div>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">10. Actualizaciones</h2>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">10. Updates</h2>
               <p>
-                Esta política puede actualizarse. La versión vigente estará siempre disponible aquí. 
-                Última actualización: {new Date().toLocaleDateString()}
+                This policy may be updated. The current version will always be available here. 
+                Last updated: {new Date().toLocaleDateString()}
               </p>
             </section>
           </div>
         </div>
       </div>
-    </div>
-  );
-}
+    </div
