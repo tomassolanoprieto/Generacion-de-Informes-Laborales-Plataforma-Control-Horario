@@ -23,93 +23,104 @@ export default function Privacy() {
             <section>
               <h2 className="text-xl font-semibold text-gray-800 mb-4">1. Introducción</h2>
               <p>
-                Esta Política de Privacidad describe cómo Control Alt Sup recopila, utiliza y protege la información personal 
-                que usted nos proporciona al utilizar nuestra aplicación de control de fichajes.
+                FrenillosCR ("nosotros", "nuestro" o "nos") opera un chatbot ("el Chatbot") alojado en Microsoft Copilot Studio,
+                diseñado para asistir a los usuarios con consultas relacionadas a nuestros servicios de ortodoncia, incluyendo
+                programación de citas, información sobre tratamientos, precios y soporte al cliente.
               </p>
             </section>
 
             <section>
               <h2 className="text-xl font-semibold text-gray-800 mb-4">2. Información que Recopilamos</h2>
-              <p className="mb-3">Recopilamos la siguiente información:</p>
+              <p className="mb-3">El Chatbot puede procesar los siguientes tipos de información:</p>
               <ul className="list-disc pl-6 space-y-2">
-                <li>Nombre y apellidos</li>
-                <li>Correo electrónico</li>
-                <li>Número de teléfono</li>
-                <li>Documento de identidad</li>
-                <li>Centro de trabajo</li>
-                <li>Registros de entrada y salida</li>
-                <li>Ubicación durante los fichajes</li>
+                <li>Mensajes que envíe al Chatbot (consultas sobre citas, tratamientos o precios)</li>
+                <li>Datos de contacto (si son proporcionados voluntariamente, ej. nombre, teléfono, email)</li>
+                <li>Metadatos de plataformas Meta (ej. ID de usuario, historial de mensajes)</li>
+                <li>Registros de interacciones con el Chatbot (para mejorar respuestas)</li>
+              </ul>
+              <p className="mt-3 font-medium">No recopilamos intencionalmente:</p>
+              <ul className="list-disc pl-6 space-y-2">
+                <li>Información financiera (tarjetas de crédito, datos bancarios)</li>
+                <li>Registros médicos sensibles (más allá de consultas generales)</li>
+                <li>Documentos de identificación oficial</li>
               </ul>
             </section>
 
             <section>
               <h2 className="text-xl font-semibold text-gray-800 mb-4">3. Uso de la Información</h2>
-              <p className="mb-3">Utilizamos esta información para:</p>
+              <p className="mb-3">Utilizamos los datos para:</p>
               <ul className="list-disc pl-6 space-y-2">
-                <li>Gestionar los registros de jornada laboral</li>
-                <li>Cumplir con las obligaciones legales de control horario</li>
-                <li>Generar informes de asistencia</li>
-                <li>Gestionar solicitudes de ausencia y vacaciones</li>
-                <li>Comunicarnos con usted sobre aspectos relacionados con su trabajo</li>
+                <li>Responder consultas sobre citas, tratamientos y precios</li>
+                <li>Mejorar la precisión y experiencia del Chatbot</li>
+                <li>Redirigir conversaciones a canales apropiados (ej. soporte humano)</li>
+                <li>Cumplir con obligaciones legales cuando aplique</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">4. Protección de Datos</h2>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">4. Compartir Datos</h2>
+              <p className="mb-3">Compartimos información con:</p>
+              <ul className="list-disc pl-6 space-y-2">
+                <li><strong>Meta Platforms:</strong> Mensajes se procesan mediante sus APIs cumpliendo sus políticas</li>
+                <li><strong>Microsoft Copilot Studio:</strong> Aloja el Chatbot bajo sus estándares de seguridad</li>
+              </ul>
+              <p className="mt-3">No vendemos ni compartimos datos con terceros para marketing.</p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">5. Seguridad de Datos</h2>
               <p>
-                Nos comprometemos a proteger la seguridad de su información personal y hemos implementado 
-                medidas técnicas y organizativas apropiadas para garantizar un nivel de seguridad adecuado 
-                al riesgo, incluyendo:
+                Implementamos medidas para proteger su información:
               </p>
               <ul className="list-disc pl-6 mt-3 space-y-2">
-                <li>Encriptación de datos</li>
-                <li>Acceso restringido a la información</li>
-                <li>Monitorización de seguridad continua</li>
-                <li>Copias de seguridad regulares</li>
+                <li>Accesos restringidos a la información</li>
+                <li>Monitoreo continuo de seguridad</li>
+                <li>Retención mínima necesaria de mensajes</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">5. Sus Derechos</h2>
-              <p className="mb-3">Usted tiene derecho a:</p>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">6. Sus Derechos</h2>
+              <p className="mb-3">Usted puede:</p>
               <ul className="list-disc pl-6 space-y-2">
-                <li>Acceder a sus datos personales</li>
-                <li>Rectificar datos inexactos</li>
-                <li>Solicitar la eliminación de sus datos</li>
-                <li>Oponerse al tratamiento de sus datos</li>
-                <li>Solicitar la limitación del tratamiento</li>
-                <li>Portabilidad de sus datos</li>
+                <li>Solicitar acceso o eliminación de sus datos</li>
+                <li>Rectificar información inexacta</li>
+                <li>Dejar de interactuar con el Chatbot en cualquier momento</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">6. Retención de Datos</h2>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">7. Retención de Datos</h2>
               <p>
-                Conservaremos sus datos personales durante el tiempo necesario para cumplir con los 
-                fines para los que se recopilaron, incluido el cumplimiento de requisitos legales, 
-                contables o de informes.
+                Conservamos mensajes solo el tiempo necesario para cumplir con las solicitudes y obligaciones legales.
               </p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">7. Contacto</h2>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">8. Cumplimiento con Meta</h2>
               <p>
-                Si tiene alguna pregunta sobre esta Política de Privacidad o el tratamiento de sus datos, 
-                puede contactarnos en:
+                El Chatbot sigue las <strong>Políticas para Desarrolladores</strong> y <strong>Términos de Plataforma</strong> de Meta.
+                No almacenamos datos sensibles más allá de lo necesario para su funcionamiento.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">9. Contacto</h2>
+              <p>
+                Para preguntas sobre privacidad:
               </p>
               <div className="mt-3">
-                <p className="font-medium">Control Alt Sup</p>
-                <p>Email: mgonzalez@controlaltsup.com</p>
-                <p>Teléfono: +34 910 123 456</p>
+                <p className="font-medium">FrenillosCR</p>
+                <p>Email: [Insertar Email de Contacto]</p>
+                <p>Teléfono: [Insertar Teléfono si aplica]</p>
               </div>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">8. Actualizaciones</h2>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">10. Actualizaciones</h2>
               <p>
-                Esta Política de Privacidad puede ser actualizada ocasionalmente. La versión más reciente 
-                estará siempre disponible en nuestra aplicación. La fecha de la última actualización es: 
-                {new Date().toLocaleDateString()}
+                Esta política puede actualizarse. La versión vigente estará siempre disponible aquí. 
+                Última actualización: {new Date().toLocaleDateString()}
               </p>
             </section>
           </div>
