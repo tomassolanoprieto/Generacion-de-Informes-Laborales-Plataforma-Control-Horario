@@ -804,7 +804,7 @@ export default function CompanyDashboard() {
         <div className="p-6">
           <div className="flex items-center gap-2 mb-8">
             <Shield className="w-8 h-8 text-blue-600" />
-            <span className="text-xl font-bold">Gestión de Proceso Personalizado Espacios</span>
+            <span className="text-xl font-bold">Portal Empresa</span>
           </div>
           <nav className="space-y-2">
             <button
@@ -909,18 +909,7 @@ export default function CompanyDashboard() {
         </div>
       </div>
 
-      <div className="flex-1 relative">
-        {/* Perfil de empresa en esquina superior derecha */}
-        <div className="absolute top-4 right-4 flex items-center gap-2 bg-white p-3 rounded-lg shadow-sm">
-          <div className="bg-blue-100 p-2 rounded-full">
-            <User className="w-5 h-5 text-blue-600" />
-          </div>
-          <div>
-            <p className="text-sm font-medium">Glinvest Altiplano S Xxi S.L.</p>
-            <p className="text-xs text-gray-500">empresa@glinvest.com</p>
-          </div>
-        </div>
-
+      <div className="flex-1">
         <Routes>
           <Route path="/" element={<Overview />} />
           <Route path="/empleados" element={<CompanyEmployees />} />
