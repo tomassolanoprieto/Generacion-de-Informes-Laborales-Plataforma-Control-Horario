@@ -69,8 +69,8 @@ export default function Home() {
           {/* Diseño bonito para el título FichajeXpert */}
           <div className="flex justify-center mb-12">
             <div className="text-5xl font-bold text-gray-800">
-              <span className="text-blue-600">Gestión de Proceso</span>
-              <span className="text-green-600">Personalizado Espacios</span>
+              <span className="text-blue-600">Fichaje</span>
+              <span className="text-green-600">Xpert</span>
             </div>
             <div className="ml-4 relative">
               {/* Icono de reloj integrado en la "X" */}
